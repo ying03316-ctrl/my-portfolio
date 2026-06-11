@@ -87,7 +87,9 @@ const GitHubAPI = {
 
   async updateFile(path, content) {
     // 先获取最新的文件信息（包括 SHA）
+    console.log(`正在获取 ${path} 的最新信息...`);
     const latestFile = await this.getFile(path);
+    console.log(`获取到的文件信息:`, latestFile);
 
     const body = {
       message: `Update ${path} via Portfolio CMS`,
@@ -98,8 +100,12 @@ const GitHubAPI = {
     // 使用最新的 SHA
     if (latestFile && latestFile.sha) {
       body.sha = latestFile.sha;
+      console.log(`使用 SHA: ${latestFile.sha}`);
+    } else {
+      console.log('未获取到 SHA，可能是新文件');
     }
 
+    console.log(`正在更新 ${path}...`);
     return this.request(`contents/${path}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
