@@ -28,14 +28,14 @@ const GitHubAPI = {
   async request(endpoint, options = {}) {
     const { token, repo } = state.config;
     if (!token || !repo) {
-      throw new Error('请先配置 GitHub Token 和仓库');
+      throw new Error('请先配置 GitHub Token 和仓库名称');
     }
 
     const url = `https://api.github.com/repos/${repo}/${endpoint}`;
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Authorization': `token ${token}`,
+        'Authorization': `Bearer ${token}`,
         'Accept': 'application/vnd.github.v3+json',
         ...options.headers
       }
@@ -43,7 +43,12 @@ const GitHubAPI = {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || `GitHub API 错误: ${response.status}`);
+      const statusMessages = {
+        401: 'Token 无效或已过期，请检查 Token 是否正确',
+        403: 'Token 权限不足，需要 repo 权限',
+        404: '仓库不存在，请检查仓库名称格式（应为：用户名/仓库名）'
+      };
+      throw new Error(statusMessages[response.status] || error.message || `GitHub API 错误: ${response.status}`);
     }
 
     return response.json();
@@ -80,8 +85,26 @@ const GitHubAPI = {
 
   async testConnection() {
     try {
+      // 先验证 Token 有效性
+      const userResponse = await fetch('https://api.github.com/user', {
+        headers: {
+          'Authorization': `Bearer ${state.config.token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (!userResponse.ok) {
+        if (userResponse.status === 401) {
+          return { success: false, message: 'Token 无效，请重新生成 Token' };
+        }
+        return { success: false, message: 'Token 验证失败' };
+      }
+
+      const user = await userResponse.json();
+
+      // 再验证仓库访问权限
       await this.request('');
-      return { success: true, message: '连接成功！' };
+      return { success: true, message: `连接成功！已验证用户: ${user.login}` };
     } catch (error) {
       return { success: false, message: error.message };
     }
