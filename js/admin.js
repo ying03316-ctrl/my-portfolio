@@ -74,15 +74,19 @@ const GitHubAPI = {
     }
   },
 
-  async updateFile(path, content, sha) {
+  async updateFile(path, content) {
+    // 先获取最新的文件信息（包括 SHA）
+    const latestFile = await this.getFile(path);
+
     const body = {
       message: `Update ${path} via Portfolio CMS`,
       content: base64Encode(JSON.stringify(content, null, 2)),
       branch: state.config.branch
     };
 
-    if (sha) {
-      body.sha = sha;
+    // 使用最新的 SHA
+    if (latestFile && latestFile.sha) {
+      body.sha = latestFile.sha;
     }
 
     return this.request(`contents/${path}`, {
@@ -582,13 +586,13 @@ async function saveAllChanges() {
   try {
     // Save profile
     const profileData = collectProfileData();
-    await GitHubAPI.updateFile('data/profile.json', profileData, state.profile?._sha);
+    await GitHubAPI.updateFile('data/profile.json', profileData);
 
     // Save projects
-    await GitHubAPI.updateFile('data/projects.json', { projects: state.projects }, state._projectsSha);
+    await GitHubAPI.updateFile('data/projects.json', { projects: state.projects });
 
     // Save articles
-    await GitHubAPI.updateFile('data/articles.json', { articles: state.articles }, state._articlesSha);
+    await GitHubAPI.updateFile('data/articles.json', { articles: state.articles });
 
     // Reload data to get new SHAs
     await loadAllData();
