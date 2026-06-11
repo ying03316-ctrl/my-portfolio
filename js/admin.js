@@ -33,6 +33,17 @@ function base64Encode(str) {
   return btoa(binary);
 }
 
+// Base64 解码函数，支持 Unicode/中文
+function base64Decode(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  const decoder = new TextDecoder();
+  return decoder.decode(bytes);
+}
+
 const GitHubAPI = {
   async request(endpoint, options = {}) {
     const { token, repo } = state.config;
@@ -66,7 +77,7 @@ const GitHubAPI = {
   async getFile(path) {
     try {
       const data = await this.request(`contents/${path}?ref=${state.config.branch}`);
-      const content = atob(data.content);
+      const content = base64Decode(data.content);
       return { content: JSON.parse(content), sha: data.sha };
     } catch (error) {
       console.error(`获取文件失败: ${path}`, error);
