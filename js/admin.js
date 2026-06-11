@@ -44,6 +44,76 @@ function base64Decode(base64) {
   return decoder.decode(bytes);
 }
 
+// 上传图片到 GitHub
+async function uploadImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const base64 = e.target.result.split(',')[1];
+        const ext = file.name.split('.').pop();
+        const filename = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${ext}`;
+        const path = `assets/images/${filename}`;
+
+        const result = await GitHubAPI.request(`contents/${path}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: `Upload image: ${filename}`,
+            content: base64,
+            branch: state.config.branch
+          })
+        });
+
+        // 返回 raw URL
+        const rawUrl = `https://raw.githubusercontent.com/${state.config.repo}/${state.config.branch}/${path}`;
+        resolve(rawUrl);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+// 处理图片上传
+async function handleImageUpload(file, inputId, previewId) {
+  const statusEl = document.getElementById('saveStatus');
+  const icon = statusEl.querySelector('.admin-save-status-icon');
+  const text = statusEl.querySelector('.admin-save-status-text');
+
+  // 显示上传中
+  icon.className = 'admin-save-status-icon loading';
+  text.textContent = '上传图片中...';
+  statusEl.classList.add('visible');
+
+  try {
+    const url = await uploadImage(file);
+    document.getElementById(inputId).value = url;
+
+    // 如果有预览元素，更新预览
+    if (previewId) {
+      document.getElementById(previewId).src = url;
+    }
+
+    icon.className = 'admin-save-status-icon success';
+    text.textContent = '图片上传成功！';
+    state.hasChanges = true;
+
+    setTimeout(() => {
+      statusEl.classList.remove('visible');
+    }, 2000);
+  } catch (error) {
+    icon.className = 'admin-save-status-icon error';
+    text.textContent = `上传失败: ${error.message}`;
+
+    setTimeout(() => {
+      statusEl.classList.remove('visible');
+    }, 3000);
+  }
+}
+
 const GitHubAPI = {
   async request(endpoint, options = {}) {
     const { token, repo } = state.config;
@@ -617,11 +687,11 @@ async function saveAllChanges() {
     state.hasChanges = false;
 
     icon.className = 'admin-save-status-icon success';
-    text.textContent = '保存成功！';
+    text.textContent = '保存成功！GitHub Pages 更新需要 1-2 分钟...';
 
     setTimeout(() => {
       statusEl.classList.remove('visible');
-    }, 3000);
+    }, 5000);
   } catch (error) {
     icon.className = 'admin-save-status-icon error';
     text.textContent = `保存失败: ${error.message}`;
@@ -723,6 +793,25 @@ function setupEventListeners() {
       e.preventDefault();
       addArticleTag();
     }
+  });
+
+  // File upload handlers
+  document.getElementById('avatarFileInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    await handleImageUpload(file, 'profileAvatar', 'avatarPreview');
+  });
+
+  document.getElementById('projectCoverInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    await handleImageUpload(file, 'projectCover');
+  });
+
+  document.getElementById('articleCoverInput').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    await handleImageUpload(file, 'articleCover');
   });
 
   // Close modals on overlay click
