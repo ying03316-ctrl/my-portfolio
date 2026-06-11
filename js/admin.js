@@ -24,6 +24,15 @@ let state = {
 // GitHub API
 // ============================================
 
+// Base64 编码函数，支持 Unicode/中文
+function base64Encode(str) {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(str);
+  let binary = '';
+  bytes.forEach(byte => binary += String.fromCharCode(byte));
+  return btoa(binary);
+}
+
 const GitHubAPI = {
   async request(endpoint, options = {}) {
     const { token, repo } = state.config;
@@ -68,7 +77,7 @@ const GitHubAPI = {
   async updateFile(path, content, sha) {
     const body = {
       message: `Update ${path} via Portfolio CMS`,
-      content: btoa(JSON.stringify(content, null, 2)),
+      content: base64Encode(JSON.stringify(content, null, 2)),
       branch: state.config.branch
     };
 
