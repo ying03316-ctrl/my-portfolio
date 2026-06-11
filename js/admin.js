@@ -93,29 +93,68 @@ const GitHubAPI = {
   },
 
   async testConnection() {
+    const { token, repo } = state.config;
+
+    // 基本验证
+    if (!token) {
+      return { success: false, message: '请填写 Token' };
+    }
+    if (!repo) {
+      return { success: false, message: '请填写仓库名称' };
+    }
+    if (!repo.includes('/')) {
+      return { success: false, message: '仓库名称格式错误，应为：用户名/仓库名' };
+    }
+
     try {
-      // 先验证 Token 有效性
+      // 验证 Token
+      console.log('正在验证 Token...');
       const userResponse = await fetch('https://api.github.com/user', {
         headers: {
-          'Authorization': `Bearer ${state.config.token}`,
+          'Authorization': `Bearer ${token}`,
           'Accept': 'application/vnd.github.v3+json'
         }
       });
 
+      console.log('Token 验证响应:', userResponse.status);
+
       if (!userResponse.ok) {
         if (userResponse.status === 401) {
-          return { success: false, message: 'Token 无效，请重新生成 Token' };
+          return { success: false, message: 'Token 无效或已过期，请重新生成' };
         }
-        return { success: false, message: 'Token 验证失败' };
+        const errorData = await userResponse.json().catch(() => ({}));
+        return { success: false, message: `Token 验证失败: ${errorData.message || userResponse.status}` };
       }
 
       const user = await userResponse.json();
+      console.log('用户验证成功:', user.login);
 
-      // 再验证仓库访问权限
-      await this.request('');
-      return { success: true, message: `连接成功！已验证用户: ${user.login}` };
+      // 验证仓库访问
+      console.log('正在验证仓库访问...');
+      const repoResponse = await fetch(`https://api.github.com/repos/${repo}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      console.log('仓库验证响应:', repoResponse.status);
+
+      if (!repoResponse.ok) {
+        if (repoResponse.status === 404) {
+          return { success: false, message: `仓库 ${repo} 不存在或无访问权限` };
+        }
+        if (repoResponse.status === 403) {
+          return { success: false, message: 'Token 权限不足，请确保有 Contents 读写权限' };
+        }
+        const errorData = await repoResponse.json().catch(() => ({}));
+        return { success: false, message: `仓库验证失败: ${errorData.message || repoResponse.status}` };
+      }
+
+      return { success: true, message: `连接成功！用户: ${user.login}，仓库: ${repo}` };
     } catch (error) {
-      return { success: false, message: error.message };
+      console.error('连接测试错误:', error);
+      return { success: false, message: `网络错误: ${error.message}` };
     }
   }
 };
@@ -153,11 +192,15 @@ async function loadAllData() {
   statusEl.className = 'admin-status';
 
   try {
+    console.log('开始加载数据...');
+
     const [profileData, projectsData, articlesData] = await Promise.all([
       GitHubAPI.getFile('data/profile.json'),
       GitHubAPI.getFile('data/projects.json'),
       GitHubAPI.getFile('data/articles.json')
     ]);
+
+    console.log('数据加载结果:', { profileData, projectsData, articlesData });
 
     if (profileData) {
       state.profile = { ...profileData.content, _sha: profileData.sha };
@@ -179,6 +222,7 @@ async function loadAllData() {
     statusEl.textContent = '数据加载成功';
     statusEl.className = 'admin-status success';
   } catch (error) {
+    console.error('数据加载失败:', error);
     statusEl.textContent = `加载失败: ${error.message}`;
     statusEl.className = 'admin-status error';
   }
