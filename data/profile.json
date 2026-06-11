@@ -1,0 +1,14 @@
+{
+  "name": "张三",
+  "title": "产品设计师 & 前端开发者",
+  "bio": "专注于创造简洁、优雅的数字体验。热爱设计与技术的交汇点，相信好的设计能让复杂的事情变得简单。",
+  "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+  "email": "hello@example.com",
+  "location": "上海，中国",
+  "social": {
+    "github": "https://github.com",
+    "twitter": "https://twitter.com",
+    "linkedin": "https://linkedin.com",
+    "dribbble": "https://dribbble.com"
+  }
+}

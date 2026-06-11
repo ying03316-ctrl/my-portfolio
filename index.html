@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio - 作品集</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <a href="#" class="header-logo" id="headerLogo">Portfolio</a>
+      <nav class="header-nav">
+        <a href="#projects">作品</a>
+        <a href="#articles">文章</a>
+        <a href="#contact">联系</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <img src="" alt="Avatar" class="hero-avatar" id="heroAvatar">
+      <h1 class="hero-title" id="heroName"></h1>
+      <p class="hero-subtitle" id="heroTitle"></p>
+      <p class="hero-bio" id="heroBio"></p>
+      <div class="hero-links" id="heroLinks"></div>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section class="section" id="projects">
+    <div class="section-header">
+      <h2 class="section-title">精选作品</h2>
+      <p class="section-subtitle">探索我的设计与开发项目</p>
+    </div>
+    <div class="projects-grid" id="projectsGrid">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Articles Section -->
+  <section class="section section-alt" id="articles">
+    <div class="section-header">
+      <h2 class="section-title">最新文章</h2>
+      <p class="section-subtitle">分享我的思考与见解</p>
+    </div>
+    <div class="articles-list" id="articlesList">
+      <div class="loading">
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="contact">
+    <div class="footer-content">
+      <div class="footer-left">
+        <div class="footer-title" id="footerName"></div>
+        <a href="" class="footer-email" id="footerEmail"></a>
+      </div>
+      <div class="footer-right footer-social" id="footerSocial"></div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="footerYear"></span> <span id="footerCopyright"></span>. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Project Detail Modal -->
+  <div class="modal-overlay" id="projectModal">
+    <div class="modal">
+      <div class="modal-header">
+        <button class="modal-close" id="projectModalClose">&times;</button>
+        <img src="" alt="" class="modal-image" id="projectModalImage">
+      </div>
+      <div class="modal-content">
+        <div class="modal-category" id="projectModalCategory"></div>
+        <h2 class="modal-title" id="projectModalTitle"></h2>
+        <p class="modal-description" id="projectModalDescription"></p>
+        <div class="modal-gallery" id="projectModalGallery"></div>
+        <div id="projectModalVideo"></div>
+        <div class="modal-meta">
+          <div class="modal-meta-item">
+            <span class="modal-meta-label">日期</span>
+            <span class="modal-meta-value" id="projectModalDate"></span>
+          </div>
+          <div class="modal-meta-item" id="projectModalLinkWrapper" style="display: none;">
+            <span class="modal-meta-label">链接</span>
+            <a href="" class="modal-meta-value" id="projectModalLink" target="_blank">访问项目</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Article Detail Modal -->
+  <div class="modal-overlay" id="articleModal">
+    <div class="modal">
+      <div class="modal-header">
+        <button class="modal-close" id="articleModalClose">&times;</button>
+        <img src="" alt="" class="modal-image" id="articleModalImage">
+      </div>
+      <div class="article-modal-content">
+        <h1 class="article-modal-title" id="articleModalTitle"></h1>
+        <p class="article-modal-date" id="articleModalDate"></p>
+        <div class="article-modal-body" id="articleModalBody"></div>
+        <div class="article-card-tags" id="articleModalTags"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 - Portfolio</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <h1 class="admin-logo">管理后台</h1>
+        <a href="index.html" class="admin-view-site" target="_blank">查看网站</a>
+      </div>
+      <nav class="admin-nav">
+        <a href="#" class="admin-nav-item active" data-section="profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          个人信息
+        </a>
+        <a href="#" class="admin-nav-item" data-section="projects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+          作品管理
+        </a>
+        <a href="#" class="admin-nav-item" data-section="articles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          文章管理
+        </a>
+        <a href="#" class="admin-nav-item" data-section="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+          设置
+        </a>
+      </nav>
+      <div class="admin-sidebar-footer">
+        <button class="btn btn-primary admin-save-btn" id="saveAllBtn">
+          保存所有更改
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      <!-- Settings Section (GitHub Token) -->
+      <section class="admin-section" id="settingsSection">
+        <div class="admin-section-header">
+          <h2>设置</h2>
+          <p>配置 GitHub 连接以保存更改</p>
+        </div>
+        <div class="admin-card">
+          <h3>GitHub 配置</h3>
+          <div class="admin-form-group">
+            <label for="githubToken">Personal Access Token</label>
+            <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" class="admin-input">
+            <small>需要 repo 权限。<a href="https://github.com/settings/tokens/new?scopes=repo&description=Portfolio%20CMS" target="_blank">生成 Token</a></small>
+          </div>
+          <div class="admin-form-group">
+            <label for="githubRepo">仓库名称</label>
+            <input type="text" id="githubRepo" placeholder="username/portfolio" class="admin-input">
+            <small>格式：用户名/仓库名</small>
+          </div>
+          <div class="admin-form-group">
+            <label for="githubBranch">分支</label>
+            <input type="text" id="githubBranch" value="main" class="admin-input">
+          </div>
+          <button class="btn btn-primary" id="testConnectionBtn">测试连接</button>
+          <div id="connectionStatus" class="admin-status"></div>
+        </div>
+      </section>
+
+      <!-- Profile Section -->
+      <section class="admin-section hidden" id="profileSection">
+        <div class="admin-section-header">
+          <h2>个人信息</h2>
+          <p>编辑你的个人资料</p>
+        </div>
+        <div class="admin-card">
+          <div class="admin-form-group">
+            <label for="profileName">姓名</label>
+            <input type="text" id="profileName" class="admin-input">
+          </div>
+          <div class="admin-form-group">
+            <label for="profileTitle">头衔</label>
+            <input type="text" id="profileTitle" class="admin-input">
+          </div>
+          <div class="admin-form-group">
+            <label for="profileBio">简介</label>
+            <textarea id="profileBio" class="admin-textarea" rows="4"></textarea>
+          </div>
+          <div class="admin-form-group">
+            <label for="profileAvatar">头像 URL</label>
+            <input type="url" id="profileAvatar" class="admin-input">
+            <div class="admin-preview">
+              <img id="avatarPreview" src="" alt="Avatar Preview">
+            </div>
+          </div>
+          <div class="admin-form-group">
+            <label for="profileEmail">邮箱</label>
+            <input type="email" id="profileEmail" class="admin-input">
+          </div>
+          <div class="admin-form-group">
+            <label for="profileLocation">所在地</label>
+            <input type="text" id="profileLocation" class="admin-input">
+          </div>
+          <h3>社交媒体</h3>
+          <div class="admin-form-group">
+            <label for="socialGithub">GitHub</label>
+            <input type="url" id="socialGithub" class="admin-input" placeholder="https://github.com/username">
+          </div>
+          <div class="admin-form-group">
+            <label for="socialTwitter">Twitter</label>
+            <input type="url" id="socialTwitter" class="admin-input" placeholder="https://twitter.com/username">
+          </div>
+          <div class="admin-form-group">
+            <label for="socialLinkedin">LinkedIn</label>
+            <input type="url" id="socialLinkedin" class="admin-input" placeholder="https://linkedin.com/in/username">
+          </div>
+          <div class="admin-form-group">
+            <label for="socialDribbble">Dribbble</label>
+            <input type="url" id="socialDribbble" class="admin-input" placeholder="https://dribbble.com/username">
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects Section -->
+      <section class="admin-section hidden" id="projectsSection">
+        <div class="admin-section-header">
+          <h2>作品管理</h2>
+          <button class="btn btn-primary" id="addProjectBtn">+ 添加作品</button>
+        </div>
+        <div class="admin-list" id="projectsList"></div>
+
+        <!-- Project Edit Modal -->
+        <div class="admin-modal-overlay" id="projectEditModal">
+          <div class="admin-modal">
+            <div class="admin-modal-header">
+              <h3 id="projectEditTitle">编辑作品</h3>
+              <button class="admin-modal-close" id="projectEditClose">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+              <input type="hidden" id="projectId">
+              <div class="admin-form-group">
+                <label for="projectTitle">标题</label>
+                <input type="text" id="projectTitle" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label for="projectCategory">分类</label>
+                <input type="text" id="projectCategory" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label for="projectDescription">描述</label>
+                <textarea id="projectDescription" class="admin-textarea" rows="4"></textarea>
+              </div>
+              <div class="admin-form-group">
+                <label for="projectCover">封面图 URL</label>
+                <input type="url" id="projectCover" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label>图片列表</label>
+                <div id="projectImagesList" class="admin-images-list"></div>
+                <div class="admin-form-row">
+                  <input type="url" id="projectNewImage" class="admin-input" placeholder="输入图片 URL">
+                  <button class="btn btn-secondary" id="addProjectImageBtn">添加</button>
+                </div>
+              </div>
+              <div class="admin-form-group">
+                <label for="projectVideo">视频 URL (YouTube)</label>
+                <input type="url" id="projectVideo" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label for="projectLink">项目链接</label>
+                <input type="url" id="projectLink" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label for="projectDate">日期</label>
+                <input type="date" id="projectDate" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label class="admin-checkbox-label">
+                  <input type="checkbox" id="projectFeatured">
+                  设为精选作品
+                </label>
+              </div>
+            </div>
+            <div class="admin-modal-footer">
+              <button class="btn btn-secondary" id="projectEditCancel">取消</button>
+              <button class="btn btn-primary" id="projectEditSave">保存</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Articles Section -->
+      <section class="admin-section hidden" id="articlesSection">
+        <div class="admin-section-header">
+          <h2>文章管理</h2>
+          <button class="btn btn-primary" id="addArticleBtn">+ 添加文章</button>
+        </div>
+        <div class="admin-list" id="articlesList"></div>
+
+        <!-- Article Edit Modal -->
+        <div class="admin-modal-overlay" id="articleEditModal">
+          <div class="admin-modal admin-modal-wide">
+            <div class="admin-modal-header">
+              <h3 id="articleEditTitle">编辑文章</h3>
+              <button class="admin-modal-close" id="articleEditClose">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+              <input type="hidden" id="articleId">
+              <div class="admin-form-group">
+                <label for="articleTitle">标题</label>
+                <input type="text" id="articleTitleInput" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label for="articleSummary">摘要</label>
+                <textarea id="articleSummary" class="admin-textarea" rows="2"></textarea>
+              </div>
+              <div class="admin-form-group">
+                <label for="articleContent">内容 (支持 Markdown)</label>
+                <textarea id="articleContent" class="admin-textarea admin-textarea-large" rows="15"></textarea>
+              </div>
+              <div class="admin-form-group">
+                <label for="articleCover">封面图 URL</label>
+                <input type="url" id="articleCover" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label for="articleDate">日期</label>
+                <input type="date" id="articleDate" class="admin-input">
+              </div>
+              <div class="admin-form-group">
+                <label>标签</label>
+                <div id="articleTagsList" class="admin-tags-list"></div>
+                <div class="admin-form-row">
+                  <input type="text" id="articleNewTag" class="admin-input" placeholder="输入标签">
+                  <button class="btn btn-secondary" id="addArticleTagBtn">添加</button>
+                </div>
+              </div>
+            </div>
+            <div class="admin-modal-footer">
+              <button class="btn btn-secondary" id="articleEditCancel">取消</button>
+              <button class="btn btn-primary" id="articleEditSave">保存</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Save Status -->
+      <div class="admin-save-status" id="saveStatus">
+        <span class="admin-save-status-icon"></span>
+        <span class="admin-save-status-text"></span>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
